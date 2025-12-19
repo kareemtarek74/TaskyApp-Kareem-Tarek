@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kareem_tarek/core/utils/text_styles.dart';
@@ -7,7 +9,9 @@ import 'package:kareem_tarek/features/tasks/presentation/widgets/filter_bottom_s
 import 'package:kareem_tarek/features/tasks/presentation/widgets/sort_dropdown_button.dart';
 
 class TaskFilterSection extends StatelessWidget {
-  const TaskFilterSection({super.key});
+  final VoidCallback? onScrollToTop;
+
+  const TaskFilterSection({super.key, this.onScrollToTop});
 
   @override
   Widget build(BuildContext context) {
@@ -61,11 +65,15 @@ class TaskFilterSection extends StatelessWidget {
                               ),
                             ),
                             builder:
-                                (context) => BlocProvider.value(
-                                  value: taskCubit,
-                                  child: FilterBottomSheet(
-                                    currentIsCompleted: isCompleted,
-                                    currentType: type,
+                                (context) => SafeArea(
+                                  top: false,
+                                  bottom: Platform.isAndroid ? true : false,
+                                  child: BlocProvider.value(
+                                    value: taskCubit,
+                                    child: FilterBottomSheet(
+                                      currentIsCompleted: isCompleted,
+                                      currentType: type,
+                                    ),
                                   ),
                                 ),
                           );
@@ -102,7 +110,10 @@ class TaskFilterSection extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(width: 12),
-                  SortDropdownButton(sortBy: sortBy),
+                  SortDropdownButton(
+                    sortBy: sortBy,
+                    onScrollToTop: onScrollToTop,
+                  ),
                 ],
               ),
 

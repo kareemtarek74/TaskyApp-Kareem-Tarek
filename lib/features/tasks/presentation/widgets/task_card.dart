@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
@@ -44,9 +46,13 @@ class TaskCard extends StatelessWidget {
                 borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
               ),
               builder:
-                  (ctx) => BlocProvider.value(
-                    value: context.read<TaskCubit>(),
-                    child: AddEditTaskBottomSheet(task: task),
+                  (ctx) => SafeArea(
+                    top: false,
+                    bottom: Platform.isAndroid ? true : false,
+                    child: BlocProvider.value(
+                      value: context.read<TaskCubit>(),
+                      child: AddEditTaskBottomSheet(task: task),
+                    ),
                   ),
             );
           },

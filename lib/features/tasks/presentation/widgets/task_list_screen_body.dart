@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kareem_tarek/core/utils/text_styles.dart';
@@ -67,9 +69,13 @@ class TaskListScreenBodyState extends State<TaskListScreenBody> {
                   borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
                 ),
                 builder:
-                    (ctx) => BlocProvider.value(
-                      value: context.read<TaskCubit>(),
-                      child: const AddEditTaskBottomSheet(),
+                    (ctx) => SafeArea(
+                      top: false,
+                      bottom: Platform.isAndroid ? true : false,
+                      child: BlocProvider.value(
+                        value: context.read<TaskCubit>(),
+                        child: const AddEditTaskBottomSheet(),
+                      ),
                     ),
               );
             },
@@ -79,7 +85,13 @@ class TaskListScreenBodyState extends State<TaskListScreenBody> {
       body: Column(
         children: [
           const TaskSearchBar(),
-          const TaskFilterSection(),
+          TaskFilterSection(
+            onScrollToTop: () {
+              if (scrollController.hasClients) {
+                scrollController.jumpTo(0);
+              }
+            },
+          ),
           Expanded(
             child: BlocConsumer<TaskCubit, TaskState>(
               listenWhen: (previous, current) {

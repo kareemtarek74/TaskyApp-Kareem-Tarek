@@ -1,0 +1,2 @@
+F:/calories_tracker/android/app/.cxx/RelWithDebInfo/46h21x3i/x86_64/CMakeFiles/edit_cache.dir
+F:/calories_tracker/android/app/.cxx/RelWithDebInfo/46h21x3i/x86_64/CMakeFiles/rebuild_cache.dir

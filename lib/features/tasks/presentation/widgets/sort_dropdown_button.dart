@@ -6,8 +6,13 @@ import 'package:kareem_tarek/features/tasks/presentation/cubit/task_cubit.dart';
 
 class SortDropdownButton extends StatelessWidget {
   final String sortBy;
+  final VoidCallback? onScrollToTop;
 
-  const SortDropdownButton({super.key, required this.sortBy});
+  const SortDropdownButton({
+    super.key,
+    required this.sortBy,
+    this.onScrollToTop,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +33,11 @@ class SortDropdownButton extends StatelessWidget {
           child: Icon(Icons.sort, color: Colors.grey[700], size: 22),
         ),
         onSelected: (value) {
-          context.read<TaskCubit>().updateFilters(sortBy: value);
+          if (value == sortBy) {
+            onScrollToTop?.call();
+          } else {
+            context.read<TaskCubit>().updateFilters(sortBy: value);
+          }
         },
         offset: const Offset(-10, 50),
         elevation: 8,

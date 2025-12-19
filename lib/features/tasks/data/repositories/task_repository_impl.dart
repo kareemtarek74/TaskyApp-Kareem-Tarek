@@ -30,7 +30,7 @@ class TaskRepositoryImpl implements TaskRepository {
           sortByDateDesc: sortBy != 'date_asc',
         )
         .map((tasks) {
-          return tasks.map(_mapToEntity).toList();
+          return tasks.map(mapToEntity).toList();
         });
   }
 
@@ -63,7 +63,7 @@ class TaskRepositoryImpl implements TaskRepository {
     return count;
   }
 
-  TaskEntity _mapToEntity(Task task) {
+  TaskEntity mapToEntity(Task task) {
     return TaskEntity(
       id: task.id,
       title: task.title,
