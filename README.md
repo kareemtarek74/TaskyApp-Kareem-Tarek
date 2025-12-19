@@ -1,97 +1,76 @@
-# Kareem Tarek – Calories Tracker App
+Tasky - Flutter Technical Task Solution
 
-## 📌 Overview
-A modern and user-friendly meal tracking app that allows users to add, view, search, sort, and delete meals. The app integrates with [TheMealDB API](https://www.themealdb.com/api.php) and includes a sleek bottom navigation bar for intuitive navigation between different features.
+A high-performance Flutter application that manages a local task list using **Drift** (SQLite) with 10,000 tasks, smart search, filtering, sorting, and fully reactive UI updates.
 
-## 🌟 What's New?
-- ✅ Completely revamped **UI/UX** for a modern and smooth experience
-- ✅ Introduced a **Bottom Navigation Bar** to navigate easily between:
-  - Local Meals
-  - Meal Search (API)
-  - Meal Categories (API)
-- ✅ Smooth transitions and better state handling
-- ✅ Enhanced empty/error/loading states with friendly visuals
+Overview
 
-## 🔧 Tech Stack
-- **Framework:** Flutter
-- **State Management:** Flutter Bloc
-- **Local Storage:** Hive
-- **Networking:** Dio
-- **Language:** Dart
+This app fulfills all requirements of the provided technical task with a strong focus on performance, scalability, and smooth user experience even with a large dataset (10,000 tasks).
 
-## 📜 Features
+Key Features Implemented
 
-### 🔸 Local Meal Tracking
-- Add a meal (name, calories, time, photo)
-- View daily meals with total calorie count
-- Sort meals by name, calories, or time
-- Delete meal entries
-- Store meals locally using Hive
+- Local database using Drift with 10,000 pre-seeded tasks
+- Smart keyword search across title & description
+- Dynamic filtering by:
+  - Task status (Completed / Incomplete)
+  - Task type (Personal / Work)
+- Sorting by creation date (Ascending / Descending)
+- Infinite scrolling with pagination
+- Fully reactive UI: any add/update/delete instantly reflects without manual refresh
+- Add new tasks via bottom sheet
+- Toggle task completion
+- Optimized for performance on low-end devices
 
-### 🔸 TheMealDB API Integration
-- Search meals by name (`/api/json/v1/1/search.php?s=`)
-- View meal details including ingredients, area, instructions, etc.
-- Filter meals by category (`/api/json/v1/1/filter.php?c=`)
-- View all available categories
+Technical Decisions & Performance Optimizations
 
-### 🔸 UI/UX Enhancements
-- Beautiful and clean UI design
-- Shimmer loading effects for better UX
-- Friendly empty states and retryable error widgets
-- Bottom Navigation for better feature organization
-- Dark/light-friendly color contrast
+1. Data Seeding (10,000 Tasks)
+- Used AI assistance to conceptualize expanding data to 10,000 unique entries.
+- Implemented smart seeding strategy in DataSeeder:
+  - First 50 recent tasks inserted immediately → app becomes interactive instantly.
+  - Remaining 9,950 tasks generated and inserted in background using:
+    - compute() for isolate-based generation (no UI blocking)
+    - Batched inserts (chunks of 500)
+    - Small delays between chunks to keep UI responsive
+- Prevents startup lag while ensuring full dataset is available shortly after launch.
 
-## 🛠 Installation & Running the App
+2. Database Performance
+- Created index on created_at for ultra-fast sorting.
+- All queries use LIMIT for server-side pagination (never load all 10k tasks at once).
+- Reactive streams via watch() ensure UI updates only when relevant data changes.
 
-### Prerequisites
-- Flutter SDK: [Installation Guide](https://docs.flutter.dev/get-started/install)
-- Android Studio or VS Code
-- Emulator or physical device
+3. State Management & Reactivity
+- Clean Architecture with:
+  - Entity → Repository → UseCase → Cubit → UI
+- TaskCubit (Bloc) manages state using rxdart for advanced stream handling.
+- Full reactivity:
+  - Any database change (add/edit/delete/toggle) triggers stream → Cubit → UI rebuild automatically.
+  - No manual refresh needed.
 
-### Steps
-```bash
-git clone https://github.com/kareemtarek74/calories_tracker
-cd calories_tracker
-flutter pub get
-flutter run
-```
+4. Smart Search & Filtering
+- Keyword search on title & description using Drift's contains.
+- 300ms debounce on search input using BehaviorSubject.debounceTime() → prevents excessive queries during typing.
+- Filters and sorting applied directly in SQL query → efficient and instant results.
 
-## 📱 APK Download
-Installable APK:  
-🔗 https://drive.google.com/file/d/19H1ppR5DKKStf-6cGb219YCIJvmhuRJi/view?usp=sharing
+5. Infinite Scroll & Lazy Loading
+- Pagination with page size = 20.
+- loadMoreTasks() increases SQL LIMIT dynamically.
+- Loading indicator at bottom when more data available.
+- hasReachedMax prevents unnecessary loads.
 
-## 📏 Responsiveness Approach
-- Used `MediaQuery`, `Expanded`, and `Flexible` for adaptive layouts
-- Responsive UI across screen sizes and orientations
-- Scrollable content to handle overflow elegantly
+6. UI Performance
+- Shimmer loading placeholders during initial seeding.
+- cacheExtent: 200 on ListView for smooth scrolling.
+- Scroll controller detects near-bottom to trigger load more.
 
-## 📂 Project Structure
+7. Conflict Resolution
+- All inserts/updates use insertOnConflictUpdate (UPSERT) → latest data always wins if concurrent modifications occur.
 
-```
-calories_tracker/
-├── lib/
-│   ├── Features/
-│   │   ├── Local Meals/
-│   │   ├── Meal DB/
-│   │   └── Main/
-│   ├── core/
-│   ├── injection_container.dart
-│   └── main.dart
-├── assets/
-├── test/
-└── pubspec.yaml
-```
-
-## 💡 Notes
-- Built using Clean Architecture (Data → Domain → Presentation)
-- Bloc/Cubit used for state management
-- Modularized UI for reusability and readability
-- Meals and categories cached with Hive for performance
-
----
-
-### 📧 Contact
-If you have any questions or feedback, feel free to reach out:
-
-📩 **Email**: Kareemtarek015@gmail.com  
-📱 **Phone**: +201275603507
+Project Structure Highlights
+lib/
+├── core/                   Styles, constants, utils, data_seeder
+├── features/tasks/
+│   ├── data/               Drift database, repository impl
+│   ├── domain/             Entities, repository, usecases
+│   ├── presentation/       Cubit, screens, widgets
+├── injection_container.dart   Dependency injection (GetIt)
+├── main.dart               App entry + seeding
+└── app.dart                MaterialApp wrapper
