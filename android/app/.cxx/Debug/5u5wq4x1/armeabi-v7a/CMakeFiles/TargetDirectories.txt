@@ -1,0 +1,2 @@
+F:/calories_tracker/android/app/.cxx/Debug/5u5wq4x1/armeabi-v7a/CMakeFiles/edit_cache.dir
+F:/calories_tracker/android/app/.cxx/Debug/5u5wq4x1/armeabi-v7a/CMakeFiles/rebuild_cache.dir

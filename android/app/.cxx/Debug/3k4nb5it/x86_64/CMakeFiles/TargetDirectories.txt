@@ -1,0 +1,2 @@
+D:/calories_tracker/android/app/.cxx/Debug/3k4nb5it/x86_64/CMakeFiles/edit_cache.dir
+D:/calories_tracker/android/app/.cxx/Debug/3k4nb5it/x86_64/CMakeFiles/rebuild_cache.dir
