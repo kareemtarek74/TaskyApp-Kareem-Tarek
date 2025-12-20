@@ -1,1 +1,0 @@
-F:\calories_tracker\build\app\intermediates\cxx\RelWithDebInfo\46h21x3i\obj\arm64-v8a
